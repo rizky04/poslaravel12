@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('price');
             $table->integer('selling_price');
 
-            $table->foreignId('category_id')
+           $table->foreignId('category_id')
                   ->references('id')
                   ->on('categories')
                   ->onDelete('cascade')
