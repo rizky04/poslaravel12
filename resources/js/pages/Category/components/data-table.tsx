@@ -3,6 +3,8 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+    ColumnFiltersState,
+     getFilteredRowModel,
 } from "@tanstack/react-table"
 
 import {
@@ -14,6 +16,9 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import { Input } from "@/components/ui/input"
+import { Link } from "@inertiajs/react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -24,15 +29,32 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getCoreRowModel(),
+     state: {
+      columnFilters,
+    },
   })
 
   return (
     <>
+    <div className="flex items-center justify-between py-4">
+        <Input
+          placeholder="Filter name categories..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        <Button>
+          <Link href={route("category.create")}>New Category</Link>
+        </Button>
+      </div>
     <div className="rounded-md border">
       <Table>
         <TableHeader>

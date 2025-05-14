@@ -18,6 +18,7 @@ const mainNavItems: NavItem[] = [
         href: '/category',
         icon: LayoutGrid,
     },
+    
 ];
 
 const footerNavItems: NavItem[] = [
