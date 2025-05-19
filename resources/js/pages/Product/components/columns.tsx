@@ -1,6 +1,6 @@
 "use client"
 
-import { Category } from "@/types"
+import { Category, Product } from "@/types"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
  
@@ -30,14 +30,14 @@ import { useState } from "react"
 import { router } from "@inertiajs/react"
 import { toast } from "sonner"
 
-export const columns: ColumnDef<Category>[] = [
+export const columns: ColumnDef<Product>[] = [
   {
     header: "No",
     cell: ({ row }) => row.index + 1,
   },
   {
-    accessorKey: "name",
-    header: "Kategori",
+    accessorKey: "product_code",
+    header: "Code",
   },
   {
     accessorKey: "description",

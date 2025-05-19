@@ -48,3 +48,16 @@ export interface Category {
     slug: string;
     description?: string;
 }
+
+export interface Product{
+    id: number;
+    name: string;
+    slug: string;
+    description: string;
+    images?: string;
+    price: number;
+    selling_price: number;
+    stock: number;
+    category_id: number;
+    category?: Category;
+}

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class StoreCategoryRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,22 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+           'name' => 'required|unique:categories,name|min:4',
+           'slug' => 'required',
+           'description' => 'nullable|string|max:255',
         ];
+    }
+
+    // protected function prepareForValidation()
+    // {
+    //     $this->merge([
+    //         'slug' => str($this->name)->slug()
+    //     ]);
+    // }
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'slug' => Str::slug($this->input('name', ''))
+        ]);
     }
 }
