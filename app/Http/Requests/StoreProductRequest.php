@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
+
 
 class StoreProductRequest extends FormRequest
 {
@@ -23,14 +25,20 @@ class StoreProductRequest extends FormRequest
     {
         return [
            'product_code' => 'required|unique:products',
-           'name' => 'required|unique:products',
+           'name' => 'required|min:4|unique:products',
            'slug' => 'required|unique:products',
-           'description' => 'nullable',
-           'image' => 'nullable|file',
-           'stock' => 'required|integer',
-           'price' => 'required|integer',
-           'selling_price' => 'required|integer',
+           'description' => 'nullable|min:4',
+           'image' => 'nullable|mimes:jpg,jpeg,png|max:2048',
+           'stock' => 'required|numeric|min:1',
+           'price' => 'required|numeric|min:1',
+           'selling_price' => 'required|numeric|min:1',
            'category_id' => 'required|exists:categories,id', 
         ];
+    }
+     protected function prepareForValidation()
+    {
+        $this->merge([
+            'slug' => Str::slug($this->input('name', ''))
+        ]);
     }
 }
