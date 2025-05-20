@@ -33,6 +33,12 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $data = $request->validated();
+        
+        if($request->hasFile('image')){
+            $image = $request->file('image');
+            $imagePath = $image->storeAs('public/products', $image->hashName());
+            $data['image'] = $imagePath;
+        }
         Product::create($data);
         return to_route('product.index');
     }
@@ -72,5 +78,21 @@ class ProductController extends Controller
     {
         $product->delete();
         return to_route('product.index');
+    }
+
+    public function getLastProductNumber($categoryId)
+    {
+        $lastProduct = Product::where('category_id', $categoryId)
+            ->orderBy('created_at', 'desc')
+            ->first();
+        $lastNumber = 0;
+
+        if($lastProduct && preg_match('/\d+$/', $lastProduct->product_cod, $matches)) {
+            $lastNumber = (int)$matches[0];
+        }
+
+        return response()->json([
+            'lastNumber' => $lastNumber,
+        ]);
     }
 }
