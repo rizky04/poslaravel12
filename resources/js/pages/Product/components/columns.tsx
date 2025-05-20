@@ -1,6 +1,6 @@
 "use client"
 
-import { Category, Product } from "@/types"
+import { Product } from "@/types"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
  
@@ -29,6 +29,7 @@ import {
 import { useState } from "react"
 import { router } from "@inertiajs/react"
 import { toast } from "sonner"
+import { parse } from "path"
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -37,25 +38,58 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "product_code",
-    header: "Code",
+    header: "Code Product",
   },
   {
-    accessorKey: "description",
-    header: "Description",
+    accessorKey: "name",
+    header: "Name Product",
   },
+  {
+    accessorKey: "price",
+    header: "Price",
+    cell:({row}) => {
+      const price = parseFloat(row.getValue('price'))
+      const formatted = new Intl.NumberFormat("id-ID", 
+        { style: "currency", currency: "IDR"}).format(price);
+      return formatted
+    }
+  },
+  {
+    accessorKey: "selling_price",
+    header: "Selling Price",
+    cell:({row}) => {
+      const selling_price = parseFloat(row.getValue('selling_price'))
+      const formatted = new Intl.NumberFormat("id-ID",{
+         style: "currency", 
+         currency: "IDR"
+        }).format(selling_price);
+      return formatted
+    }
+  },
+   {
+    accessorKey: "stock",
+    header: "Stock",
+  },
+  {
+    accessorKey: "category",
+    header: "Category",
+    cell:({row}) => row.original.category.name
+  },
+  
+  
   {
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => {
-        const category = row.original
+        const product = row.original
         const [isDialogOpen, setIsDialogOpen] = useState(false)
         const onDelete = () => {
-            router.delete(route('category.destroy', category.id), {
+            router.delete(route('product.destroy', product.id), {
                 onSuccess: () => {
-                    toast.success('Category deleted successfully')
+                    toast.success('product deleted successfully')
                 },
                 onError: () => {
-                    toast.error('Failed to delete category')
+                    toast.error('Failed to delete product')
                 },
             })
             setIsDialogOpen(false)
@@ -72,7 +106,7 @@ export const columns: ColumnDef<Product>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => {router.visit(route('category.edit', category.id))}}
+                onClick={() => {router.visit(route('product.edit', product.id))}}
               >
                Edit
               </DropdownMenuItem>
@@ -86,7 +120,7 @@ export const columns: ColumnDef<Product>[] = [
           {/* <AlertDialogTrigger>Open</AlertDialogTrigger> */}
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure delete category {category.name} ?</AlertDialogTitle>
+              <AlertDialogTitle>Are you absolutely sure delete product {product.name} ?</AlertDialogTitle>
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete your account
                 and remove your data from our servers.

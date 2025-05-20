@@ -10,8 +10,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('category', (CategoryController::class));
-    Route::resource('product', (ProductController::class));
+    Route::resource('category', CategoryController::class);
+    Route::resource('product', ProductController::class);
     Route::get('/products/last-number/{categoryId}', [ProductController::class, 'getLastNumberByCategoryId']);
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');

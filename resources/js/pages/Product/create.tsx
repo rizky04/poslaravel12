@@ -16,8 +16,8 @@ import { toast } from 'sonner';
 export default function create() {
   const breadcrumbs: BreadcrumbItem[] = [
     {
-      title: 'Category / Create',
-      href: '/category',
+      title: 'Product / Create',
+      href: '//product',
     },
   ];
   const { data, setData, post, processing, errors } = useForm({
@@ -27,7 +27,7 @@ export default function create() {
 
  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    post(route('category.store'), {
+    post(route('product.store'), {
       onSuccess: () => {
         toast.success('Category created successfully');
       },

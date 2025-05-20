@@ -17,7 +17,7 @@ export default function edit({category}:{category: Category}) {
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Category / Edit',
-      href: '/category',
+      href: '/product',
     },
   ];
   const { data, setData, post, processing, errors } = useForm({

@@ -14,8 +14,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        Inertia::render('Product/index',[
-            'data' => Product::with('category')->latest()->get(),
+       
+      return Inertia::render('Product/index',[
+            'product' => Product::with('category')->latest()->get(),
         ]);
     }
 
@@ -24,7 +25,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        Inertia::render('Product/create');
+       return Inertia::render('Product/create');
     }
 
     /**

@@ -59,5 +59,5 @@ export interface Product{
     selling_price: number;
     stock: number;
     category_id: number;
-    category?: Category;
+    category: Category;
 }

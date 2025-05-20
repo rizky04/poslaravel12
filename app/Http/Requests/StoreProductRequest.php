@@ -27,11 +27,11 @@ class StoreProductRequest extends FormRequest
            'product_code' => 'required|unique:products',
            'name' => 'required|min:4|unique:products',
            'slug' => 'required|unique:products',
-           'description' => 'nullable|min:4',
-           'image' => 'nullable|mimes:jpg,jpeg,png|max:2048',
            'stock' => 'required|numeric|min:1',
            'price' => 'required|numeric|min:1',
            'selling_price' => 'required|numeric|min:1',
+           'image' => 'nullable|mimes:jpg,jpeg,png|max:2048',
+           'description' => 'nullable|min:4',
            'category_id' => 'required|exists:categories,id', 
         ];
     }
