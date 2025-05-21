@@ -3,6 +3,11 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue, } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
@@ -21,8 +26,14 @@ export default function create() {
     },
   ];
   const { data, setData, post, processing, errors } = useForm({
+    product_code : '',
     name: '',
+    slug: '',
+    stock: '',
+    price: '',
+    selling_price: '',
     description: '',
+    category_id: '',
   })
 
  const onSubmit = (e: React.FormEvent) => {
@@ -47,6 +58,21 @@ export default function create() {
                 <CardContent>
                   <form onSubmit={onSubmit}>
                     <div className="flex flex-col gap-5">
+                      <div className="grid gap-2">
+                      <label>
+                          Nama Kategori
+                      </label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">Kategori 1</SelectItem>
+                          <SelectItem value="2">Kategori 2</SelectItem>
+                          <SelectItem value="3">Kategori 3</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      </div>
                       <div className="grid gap-2">
                         <label>
                           Nama Kategori
