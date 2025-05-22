@@ -25,7 +25,7 @@ export default function create({category}: CreateCategoryProps) {
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Product / Create',
-      href: '//product',
+      href: '/product',
     },
   ];
   const { data, setData, post, processing, errors } = useForm({
@@ -46,14 +46,14 @@ export default function create({category}: CreateCategoryProps) {
     const numbericCategoryId = parseInt(categoryId);
     setData("category_id", numbericCategoryId);
     try {
-      const response = await fetch(`/last-number/${categoryId}`)
+      const response = await fetch(`/products/last-number/${categoryId}`)
       const result = await response.json();
 
       const selectcategoryData = category.find((item) => item.id === numbericCategoryId);
       if (selectcategoryData){
-        const prefix = selectcategoryData.name.slice(0, 3).toLocaleLowerCase();
+        const prefix = selectcategoryData.name.slice(0, 3);
         const today = new Date().toLocaleDateString('id-ID').replace(/\//g, '');
-        const newCode = `${prefix}${today}${String(result.last_number + 1).padStart(2, '0')}`;
+        const newCode = `${prefix}-${today}-${String(result.last_number + 1).padStart(2, '0')}`;
         setProductCode(newCode);
         setData('product_code', newCode);
       }
@@ -97,7 +97,7 @@ export default function create({category}: CreateCategoryProps) {
                       <label>
                           Nama Kategori
                       </label>
-                      <Select 
+                      <Select
                       name='category_id'
                       onValueChange={handleCategoryChange}
                       >
@@ -106,8 +106,8 @@ export default function create({category}: CreateCategoryProps) {
                         </SelectTrigger>
                         <SelectContent>
                           {category.map((item) => (
-                            <SelectItem 
-                            key={item.id} 
+                            <SelectItem
+                            key={item.id}
                             value={item.id.toString()}>
                               {item.name}
                             </SelectItem>
@@ -131,7 +131,7 @@ export default function create({category}: CreateCategoryProps) {
                         value={data.name}
                         onChange={(e) => setData('name', e.target.value)}
                         name="name"
-                        type='text' 
+                        type='text'
                         className={cn(errors.name ? "border-red-600 border-1": "", "input-base-class")}
                         disabled={processing}
                         placeholder="Kategori" />
@@ -144,7 +144,7 @@ export default function create({category}: CreateCategoryProps) {
                         <Textarea
                         value={data.description}
                         onChange={(e) => setData('description', e.target.value)}
-                        name="description" 
+                        name="description"
                         disabled={processing}
                         className={cn(errors.description ? "border-red-600 border-1": "", "input-base-class")}
                         placeholder="Kategori" />
