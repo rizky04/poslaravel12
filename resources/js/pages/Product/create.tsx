@@ -11,14 +11,17 @@ import { Select,
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
-import { BreadcrumbItem } from '@/types';
+import { BreadcrumbItem, Category } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
-import React from 'react'
+import React, { useState } from 'react'
 import { toast } from 'sonner';
 
 
+interface CreateCategoryProps {
+  category: Category[]
+}
 
-export default function create() {
+export default function create({category}: CreateCategoryProps) {
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Product / Create',
@@ -29,21 +32,53 @@ export default function create() {
     product_code : '',
     name: '',
     slug: '',
+    description: '',
+    image: null as File | null,
     stock: '',
     price: '',
     selling_price: '',
-    description: '',
-    category_id: '',
+    category_id: 0,
   })
+  const [prouctCode, setProductCode] = useState<string>('');
+  const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
+
+  const handleCategoryChange = async (categoryId: string) => {
+    const numbericCategoryId = parseInt(categoryId);
+    setData("category_id", numbericCategoryId);
+    try {
+      const response = await fetch(`/last-number/${categoryId}`)
+      const result = await response.json();
+
+      const selectcategoryData = category.find((item) => item.id === numbericCategoryId);
+      if (selectcategoryData){
+        const prefix = selectcategoryData.name.slice(0, 3).toLocaleLowerCase();
+        const today = new Date().toLocaleDateString('id-ID').replace(/\//g, '');
+        const newCode = `${prefix}${today}${String(result.last_number + 1).padStart(2, '0')}`;
+        setProductCode(newCode);
+        setData('product_code', newCode);
+      }
+    } catch (error) {
+      console.error('Error fetching last number:', error);
+    }
+  }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+   if (file) {
+    setData('image', file);
+    setPreview(URL.createObjectURL(file));
+   }
+  };
+
 
  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     post(route('product.store'), {
       onSuccess: () => {
-        toast.success('Category created successfully');
+        toast.success('Product created successfully');
       },
       onError: () => {
-        toast.error('Failed to create category');
+        toast.error('Failed to create Product');
       },
     })
   }
@@ -62,16 +97,31 @@ export default function create() {
                       <label>
                           Nama Kategori
                       </label>
-                      <Select>
+                      <Select 
+                      name='category_id'
+                      onValueChange={handleCategoryChange}
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="1">Kategori 1</SelectItem>
-                          <SelectItem value="2">Kategori 2</SelectItem>
-                          <SelectItem value="3">Kategori 3</SelectItem>
+                          {category.map((item) => (
+                            <SelectItem 
+                            key={item.id} 
+                            value={item.id.toString()}>
+                              {item.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
+                      </div>
+
+                       <div className="grid gap-2">
+                        <label>
+                          Nama Kategori
+                        </label>
+                        <Input value={prouctCode} name='product_code' />
+                        <InputError message={errors.name} />
                       </div>
                       <div className="grid gap-2">
                         <label>

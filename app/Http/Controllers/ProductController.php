@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\Category;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -25,7 +26,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-       return Inertia::render('Product/create');
+       return Inertia::render('Product/create',[
+           'category' => Category::all(),
+       ]);
     }
 
     /**
@@ -88,12 +91,12 @@ class ProductController extends Controller
             ->first();
         $lastNumber = 0;
 
-        if($lastProduct && preg_match('/\d+$/', $lastProduct->product_cod, $matches)) {
+        if($lastProduct && preg_match('/\d+$/', $lastProduct->product_code, $matches)) {
             $lastNumber = (int)$matches[0];
         }
 
         return response()->json([
-            'lastNumber' => $lastNumber,
+            'last_number' => $lastNumber,
         ]);
     }
 }
