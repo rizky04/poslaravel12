@@ -195,6 +195,19 @@ export default function edit({ category, product }: UpdateCategoryProps) {
                         placeholder="Harga" />
                       <InputError message={errors.stock} />
                     </div>
+                     <div className="grid gap-2">
+                      <label>
+                        Deskripsi
+                      </label>
+                      <Textarea
+                        value={data.description}
+                        onChange={(e) => setData('description', e.target.value)}
+                        name="description"
+                        disabled={processing}
+                        className={cn(errors.description ? "border-red-600 border-1" : "", "input-base-class")}
+                        placeholder="description" />
+                      <InputError message={errors.description} />
+                    </div>
                     <div className="grid gap-2">
                       <label>
                       Foto
@@ -217,25 +230,12 @@ export default function edit({ category, product }: UpdateCategoryProps) {
                         />
                       )}
                     </div>
-                    <br />
-                    <div className="grid gap-2">
-                      <label>
-                        Deskripsi
-                      </label>
-                      <Textarea
-                        value={data.description}
-                        onChange={(e) => setData('description', e.target.value)}
-                        name="description"
-                        disabled={processing}
-                        className={cn(errors.description ? "border-red-600 border-1" : "", "input-base-class")}
-                        placeholder="description" />
-                      <InputError message={errors.description} />
-                    </div>
-                    <div>
-                      <Button type="submit">
+                   
+                     <div className='gap-y-2'>
+                     <Button type="submit">
                         Simpan
                       </Button>
-                    </div>
+                     </div>
                   </div>
                 </form>
               </div>

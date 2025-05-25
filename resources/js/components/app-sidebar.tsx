@@ -20,7 +20,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Product',
-        href: 'product',
+        href: '/product',
         icon: Package,
     },
     

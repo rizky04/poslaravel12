@@ -54,7 +54,7 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         return Inertia::render('Product/show', [
-            'product' => $product,
+            'product' => Product::with('category')->find($product->id),
             'category' => Category::all(),
         ]);
     }

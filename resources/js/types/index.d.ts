@@ -1,4 +1,5 @@
 import { LucideIcon } from 'lucide-react';
+import { ReactNode } from 'react';
 import type { Config } from 'ziggy-js';
 
 export interface Auth {
@@ -55,10 +56,36 @@ export interface Product{
     name: string;
     slug: string;
     description: string;
-    images?: string;
+    image?: string;
     price: number;
     selling_price: number;
     stock: number;
     category_id: number;
     category: Category;
 }
+
+export interface TransactionType = 'SALE' | 'PURCHASE'
+
+export interface TransactionItem {
+        id?: number;
+        transaction_id?: number;
+        product_id: number;
+        quantity: number;
+        price: number;
+        selling_price: number;
+        createAt?: Date;
+    }
+export interface Transaction {
+    date: ReactNode;
+    id: number;
+    no_transaction: string;
+    type: TransactionType;
+    transaction_code: string;
+    items: TransactionItem[];
+    total_amount: number;
+    notes: string;
+    created_at: string;
+    updated_at: string;
+    user: User;
+}
+
