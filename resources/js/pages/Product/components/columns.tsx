@@ -110,6 +110,11 @@ export const columns: ColumnDef<Product>[] = [
               >
                Edit
               </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {router.visit(route('product.show', product.id))}}
+              >
+               Detail
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => {setTimeout(() => {setIsDialogOpen(true)}, 100)}}>Delete</DropdownMenuItem>
             </DropdownMenuContent>

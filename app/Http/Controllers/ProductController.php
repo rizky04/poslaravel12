@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -40,7 +41,7 @@ class ProductController extends Controller
         
         if($request->hasFile('image')){
             $image = $request->file('image');
-            $imagePath = $image->storeAs('public/products', $image->hashName());
+            $imagePath = $image->storeAs('products', $image->hashName());
             $data['image'] = $imagePath;
         }
         Product::create($data);
@@ -52,7 +53,10 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        return Inertia::render('Product/show', [
+            'product' => $product,
+            'category' => Category::all(),
+        ]);
     }
 
     /**
@@ -62,15 +66,27 @@ class ProductController extends Controller
     {
         return Inertia::render('Product/edit', [
             'product' => Product::find($id),
+            'category' => Category::all(),
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        $data = $request->validated();
+         $data = $request->validated();
+        
+        if($request->hasFile('image')){
+            if($product->image){
+                Storage::delete('products/' . basename($product->image)); // Delete old image if exists
+            }
+            $image = $request->file('image');
+            $imagePath = $image->storeAs('products', $image->hashName());
+            $data['image'] = $imagePath;
+        }else{
+            unset($data['image']); // Remove image key if no new image is uploaded
+        }
         $product->update($data);
         return to_route('product.index');
     }
@@ -81,11 +97,15 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
+        if($product->image){
+            Storage::delete('products/' . basename($product->image)); // Delete image file if exists
+        }
         return to_route('product.index');
     }
 
     public function getLastProductNumber($categoryId)
     {
+        
         $lastProduct = Product::where('category_id', $categoryId)
             ->orderBy('created_at', 'desc')
             ->first();

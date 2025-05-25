@@ -12,7 +12,7 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('category', CategoryController::class);
     Route::resource('product', ProductController::class);
-    Route::get('/products/last-number/{categoryId}', [ProductController::class, 'getLastProductNumber']);
+    Route::get('/products/last-number/{categoryId}', [ProductController::class, 'getLastProductNumber'])->name('products.last-number');
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');

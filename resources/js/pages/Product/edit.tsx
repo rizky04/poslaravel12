@@ -1,94 +1,248 @@
 import { AppContent } from '@/components/app-content';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
-import { BreadcrumbItem, Category } from '@/types';
+import { BreadcrumbItem, Category, Product } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
-import React from 'react'
+import React, { useState } from 'react'
 import { toast } from 'sonner';
 
 
+interface UpdateCategoryProps {
+  category: Category[],
+  product: Product,
+}
 
-export default function edit({category}:{category: Category}) {
+export default function edit({ category, product }: UpdateCategoryProps) {
   const breadcrumbs: BreadcrumbItem[] = [
     {
-      title: 'Category / Edit',
+      title: 'Product / Edit',
       href: '/product',
     },
   ];
   const { data, setData, post, processing, errors } = useForm({
-    name: category.name || '',
-    description: category.description || '',
-    _method: 'PUT',
+    product_code: product.product_code || "",
+    name: product.name || "",
+    slug: product.slug || "",
+    description: product.description || "",
+    image: null as File | null,
+    stock: product.stock || '',
+    price: product.price || '',
+    selling_price: product.selling_price || '',
+    category_id: product.category_id ? product.category_id : 0,
+   _method: 'PUT',
   })
+  const [prouctCode, setProductCode] = useState<string>('');
+  const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
 
- const onUpdate = (e: React.FormEvent) => {
+  const handleCategoryChange = async (categoryId: string) => {
+    const numbericCategoryId = parseInt(categoryId);
+    setData("category_id", numbericCategoryId);
+    try {
+      const response = await fetch(`/products/last-number/${categoryId}`)
+      const result = await response.json();
+
+      const selectcategoryData = category.find((item) => item.id === numbericCategoryId);
+      if (selectcategoryData) {
+        const prefix = selectcategoryData.name.slice(0, 3);
+        const today = new Date().toLocaleDateString('id-ID').replace(/\//g, '');
+        const newCode = `${prefix}-${today}-${String(result.last_number + 1).padStart(2, '0')}`;
+        setProductCode(newCode);
+        setData('product_code', newCode);
+      }
+    } catch (error) {
+      console.error('Error fetching last number:', error);
+    }
+  }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setData('image', file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    post(route('category.update', category.id), {
+    post(route('product.update', product.id), {
       onSuccess: () => {
-        toast.success('Category updated successfully');
+        toast.success('Product updated successfully');
       },
       onError: () => {
-        toast.error('Failed to updated category');
+        toast.error('Failed to updated Product');
       },
     })
   }
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Create Category" />
-      <div className="space-y-6">
-        <div className='m-4'>
-          <div className="py-3">
-            <div className="mx-auto max-w-lg sm:px-6 lg:px-8">
-              <Card>
-                <CardContent>
-                  <form onSubmit={onUpdate}>
-                    <div className="flex flex-col gap-5">
-                      <div className="grid gap-2">
-                        <label>
-                          Nama Kategori
-                        </label>
-                        <Input
+        <div className="flex justify-center items-center my-4">
+        <Card className='max-w-5xl w-full'>
+          <CardHeader>
+            <p className='font-serif font-extrabold'>
+              <small>*Pilih Kategori product untuk membuat kode product</small>
+              <br />
+              <small>*Upload file gamber produck jika diperlukan</small>
+            </p>
+          </CardHeader>
+          <Separator />
+          <CardContent>
+            <div className="py-6">
+              <div className="mx-auto sm:px-6 lg:px-8">
+                <form className="space-y-6" onSubmit={onSubmit}>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid gap-2">
+                      <label>
+                        Kategori Produk
+                      </label>
+                      <Select
+                        name='category_id'
+                        onValueChange={handleCategoryChange}
+                        defaultValue={data.category_id.toString() || ""}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pilih Kategori" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {category.map((item) => (
+                            <SelectItem
+                              key={item.id}
+                              value={item.id.toString()}>
+                              {item.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <InputError message={errors.category_id} />
+                    </div>
+                    <div className="grid gap-2">
+                      <label>
+                        Kode Produk
+                      </label>
+                      <Input value={data.product_code ? data.product_code : prouctCode}
+                       name='product_code'
+                        className={cn(errors.product_code ? "border-red-600 border-1": "", "input-base-class")}
+                       />
+                      <InputError message={errors.product_code} />
+                    </div>
+                    <div className="grid gap-2">
+                      <label>
+                      Nama Product
+                      </label>
+                      <Input
                         value={data.name}
                         onChange={(e) => setData('name', e.target.value)}
                         name="name"
-                        type='text' 
+                        type='text'
+                        className={cn(errors.name ? "border-red-600 border-1" : "", "input-base-class")}
                         disabled={processing}
-                        className={cn(errors.name ? "border-red-600 border-1": "", "input-base-class")}
-                        placeholder="Kategori" />
-                        <InputError message={errors.name} />
-                      </div>
-                      <div className="grid gap-2">
-                        <label>
-                          Deskripsi
-                        </label>
-                        <Textarea
+                        placeholder=" Nama Product" />
+                      <InputError message={errors.name} />
+                    </div>
+                    <div className="grid gap-2">
+                      <label>
+                      Harga Product
+                      </label>
+                      <Input
+                        value={data.price}
+                        onChange={(e) => setData('price', e.target.value)}
+                        name="price"
+                        type='number'
+                        className={cn(errors.price ? "border-red-600 border-1" : "", "input-base-class")}
+                        disabled={processing}
+                        placeholder="Harga" />
+                      <InputError message={errors.price} />
+                    </div>
+                     <div className="grid gap-2">
+                      <label>
+                      Harga Jual
+                      </label>
+                      <Input
+                        value={data.selling_price}
+                        onChange={(e) => setData('selling_price', e.target.value)}
+                        name="price"
+                        type='number'
+                        className={cn(errors.selling_price ? "border-red-600 border-1" : "", "input-base-class")}
+                        disabled={processing}
+                        placeholder="Harga" />
+                      <InputError message={errors.selling_price} />
+                    </div>
+                     <div className="grid gap-2">
+                      <label>
+                      Stok Produk
+                      </label>
+                      <Input
+                        value={data.stock}
+                        onChange={(e) => setData('stock', e.target.value)}
+                        name="price"
+                        type='number'
+                        className={cn(errors.stock ? "border-red-600 border-1" : "", "input-base-class")}
+                        disabled={processing}
+                        placeholder="Harga" />
+                      <InputError message={errors.stock} />
+                    </div>
+                    <div className="grid gap-2">
+                      <label>
+                      Foto
+                      </label>
+                      <Input
+                        name="image"
+                        type='file'
+                        disabled={processing}
+                        onChange={handleImageChange}
+                        className={cn(errors.image ? "border-red-600 border-1" : "", "input-base-class")}
+                         />
+                      <InputError message={errors.image} />
+                    </div>
+                    <div className="grid gap-2">
+                      {preview && (
+                        <img
+                          src={preview as string}
+                          alt="Preview"
+                          className="w-32 h-32 object-cover rounded-md"
+                        />
+                      )}
+                    </div>
+                    <br />
+                    <div className="grid gap-2">
+                      <label>
+                        Deskripsi
+                      </label>
+                      <Textarea
                         value={data.description}
                         onChange={(e) => setData('description', e.target.value)}
-                        name="description" 
+                        name="description"
                         disabled={processing}
-                        className={cn(errors.description ? "border-red-600 border-1": "", "input-base-class")}
-                        placeholder="Kategori" />
-                        <InputError message={errors.description} />
-                        <InputError />
-                      </div>
-                      <div className='gap-y-2'>
-                        <Button type="submit">
-                          Simpan
-                        </Button>
-                      </div>
+                        className={cn(errors.description ? "border-red-600 border-1" : "", "input-base-class")}
+                        placeholder="description" />
+                      <InputError message={errors.description} />
                     </div>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+                    <div>
+                      <Button type="submit">
+                        Simpan
+                      </Button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+           </div>
+          </CardContent>
+        </Card>
         </div>
-      </div>
     </AppLayout>
   )
 }

@@ -51,6 +51,7 @@ export interface Category {
 
 export interface Product{
     id: number;
+    product_code: string;
     name: string;
     slug: string;
     description: string;
