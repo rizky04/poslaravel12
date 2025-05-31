@@ -23,6 +23,11 @@ const mainNavItems: NavItem[] = [
         href: '/product',
         icon: Package,
     },
+    {
+        title: 'Transaction',
+        href: '/transaction',
+        icon: Package,
+    },
     
 ];
 

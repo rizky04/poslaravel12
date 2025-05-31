@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
+use Inertia\Inertia;
 
 class TransactionController extends Controller
 {
@@ -14,6 +15,9 @@ class TransactionController extends Controller
     public function index()
     {
         //
+        return Inertia::render('Transaction/index', [
+            'transaction' => Transaction::latest()->paginate(10),
+        ]);
     }
 
     /**
