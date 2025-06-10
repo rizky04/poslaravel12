@@ -34,18 +34,22 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
+  const [globalFilter, setGlobalFilter] = useState<string>("")
   const table = useReactTable({
     data,
     columns,
-    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
       columnFilters,
+      globalFilter,
     },
   })
 
@@ -54,14 +58,12 @@ export function DataTable<TData, TValue>({
     <div className="flex items-center justify-between py-4">
         <Input
           placeholder="Filter name product..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
+          value={globalFilter ?? ""}
+          onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm"
         />
         <Button>
-          <Link href={route("product.create")}>New Product</Link>
+          <Link href={route("transaction.create")}>New Transaction</Link>
         </Button>
       </div>
     <div className="rounded-md border">

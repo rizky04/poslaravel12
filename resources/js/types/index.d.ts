@@ -73,6 +73,7 @@ export interface TransactionItem {
         quantity: number;
         price: number;
         selling_price: number;
+        product: Product;
         createAt?: Date;
     }
 export interface Transaction {

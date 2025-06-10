@@ -35,7 +35,7 @@ export const columns: ColumnDef<Transaction>[] = [
     accessorKey: "created_at",
     header: () => {
       return <Button variant={"ghost"}>
-          Data <ArrowUpDown className="ml-2 h-4 w-4" />
+          Date <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     },
     cell: ({row}) => {
@@ -53,7 +53,7 @@ export const columns: ColumnDef<Transaction>[] = [
     accessorKey: "type",
     header: () => {
       return <Button variant={"ghost"}>
-          Product Code <ArrowUpDown className="ml-2 h-4 w-4" />
+          Type <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     },
     cell: ({row}) => {
@@ -90,7 +90,7 @@ export const columns: ColumnDef<Transaction>[] = [
     header: "Items",
     cell:({row}) => {
       const items = row.original.items
-      const itemsList = items.map(item => `{item.product.name} (${item.quantity})`).join(', ')
+      const itemsList = items.map(item => `${item.product.name} (${item.quantity})`).join(', ')
       return (
         <div className="max-w-[300pc] truncate" title={itemsList}>
           {itemsList}

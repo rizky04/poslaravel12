@@ -1,11 +1,11 @@
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem, Product } from '@/types'
+import { BreadcrumbItem, Product, Transaction } from '@/types'
 import { Head } from '@inertiajs/react';
 import { DataTable } from './components/data-table';
 import { columns } from './components/columns';
 
 interface TransactionIndexProps {
-  transaction : TransactionIndexProps[]
+  transaction : Transaction[]
 }
 
 const breadcrumbs: BreadcrumbItem[] = [

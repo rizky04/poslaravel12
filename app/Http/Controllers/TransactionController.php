@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
+use App\Models\Product;
 use Inertia\Inertia;
 
 class TransactionController extends Controller
@@ -25,7 +26,9 @@ class TransactionController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Transaction/create',[
+            'products' => Product::with(['category'])->get(),
+        ]);
     }
 
     /**
