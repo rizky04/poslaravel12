@@ -6,6 +6,7 @@ use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class TransactionController extends Controller
@@ -36,7 +37,10 @@ class TransactionController extends Controller
      */
     public function store(StoreTransactionRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['user_id'] = Auth::user()->id; // Assuming you want to store the authenticated user's ID
+        Transaction::create($data);
+        return to_route('transaction.index');
     }
 
     /**

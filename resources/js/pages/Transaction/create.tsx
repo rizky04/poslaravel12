@@ -24,16 +24,26 @@ import { toast } from 'sonner';
 
 
 interface CreateTransactionProps extends PageProps {
-  products: Product[];
+  products: Product[]
 }
 
-export default function create({auth, products}: CreateTransactionProps) {
+export default function create({ auth, products}: CreateTransactionProps) {
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Transaction / Create',
       href: '/transaction/create',
     },
   ];
+
+  const { data, setData, post, processing, errors } = useForm({
+    product_id: '',
+    quantity: '',
+    price: '',
+    discount: '',
+    total: '',
+    description: '',
+    user_id: auth.user.id,
+  });
 
 
   return (

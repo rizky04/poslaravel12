@@ -22,7 +22,10 @@ class StoreTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+           'type' => 'required',
+           'no_transaction' => 'required|unique:transactions,no_transaction',
+           'notes' => 'nullable|string|max:255',
+           'total_amount' => 'required|numeric|min:0',
         ];
     }
 }
